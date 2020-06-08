@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Welcome to Durgesh's Pub
 
 You can use the [editor on GitHub](https://github.com/Inv3nt0r1/Durgeshs-pub/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
