@@ -1,19 +1,10 @@
 #!/bin/bash
 . /home/pi/.bashrc
-
-file="/tmp/test.txt"
-echo "Adding first line" > $file
-echo "Adding first line replaced" > $file
-echo "Appending second line " >> $file
-echo "Appending third line" >> $file
-cat $file
+echo "Script loaded"
+/usr/bin/mount /dev/sda1 /mnt/extdisk
+echo "Disk mounted"
 python3 /home/pi/Durgeshs-pub/script.py &
-file="/tmp/test1.txt"
-echo "Adding first line" > $file
-echo "Adding first line replaced" > $file
-echo "Appending second line " >> $file
-echo "Appending third line" >> $file
-cat $file
+echo "Python program started, sleeping for 30 seconds"
 sleep 30
 cd /home/pi/Durgeshs-pub/
 git add .
