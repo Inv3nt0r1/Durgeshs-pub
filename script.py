@@ -20,7 +20,7 @@ print("URL: ",public_url)
 with open('redirect.js','r') as file:
     data = file.readlines()
 
-data[0] = 'var link = "'+public_url+'"'
+data[0] = 'var link = "'+public_url+'"\n'
 print(data)
 
 with open('redirect.js','w') as file:
