@@ -1,2 +1,2 @@
-var link = "http://2c1878e5aa94.in.ngrok.io"    location.href = link;
+var link = "http://5c44222dde82.in.ngrok.io"
 };
