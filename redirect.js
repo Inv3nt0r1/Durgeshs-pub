@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+var link = "http://6d8b481c9221.in.ngrok.io"
 var link = "http://ef401cbde146.in.ngrok.io"
     location.href = link;
 };
