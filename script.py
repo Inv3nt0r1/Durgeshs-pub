@@ -1,10 +1,19 @@
 from pyngrok.conf import PyngrokConfig
 from pyngrok import ngrok
 import os
+import sys
 
 import config
 
-print("Before auth setting")
+
+path = "/mnt/extdisk/Courses"
+isdir = os.path.isdir(path)
+if(isdir==False):
+    print("Hard drive is not connected")
+    sys.exit()
+
+print("Hard drive connected")
+#print("Before auth setting")
 auth = config.auth
 print("Auth: ",auth)
 #ngrok.set_auth_token(auth)
@@ -17,12 +26,12 @@ public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config)
 print("connect is also done")
 print("URL: ",public_url)
 
-with open('redirect.js','r') as file:
+with open('/home/pi/Durgeshs-pub/redirect.js','r') as file:
     data = file.readlines()
 
 data[0] = 'var link = "'+public_url+'"\n'
 
-with open('redirect.js','w') as file:
+with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
     file.writelines(data)
 
 print("\n\n\nData: ",data,"\n\n\n")
