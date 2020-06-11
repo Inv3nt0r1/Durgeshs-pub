@@ -1,4 +1,4 @@
-var link = "http://886d3fce30aa.in.ngrok.io"
+var link = "http://5cc64174dae0.in.ngrok.io"
 
 document.getElementById("redirect_button").onclick = function () {
     location.href = link;
