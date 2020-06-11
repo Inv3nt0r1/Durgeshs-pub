@@ -1,3 +1,4 @@
-var link = "http://571b73626304.in.ngrok.io"document.getElementById("redirect_button").onclick = function () {
+var link = "http://ef401cbde146.in.ngrok.io"
     location.href = link;
 };
+
