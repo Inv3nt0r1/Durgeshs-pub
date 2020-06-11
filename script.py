@@ -36,7 +36,7 @@ with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
 
 print("\n\n\nData: ",data,"\n\n\n")
 
-os.system("cd ~/Desktop/Durgeshs-pub")
+os.system("cd /home/pi/Durgeshs-pub")
 os.system("git add .")
 os.system("git commit -m 'This commit is automatically done by the server script, to keep updating the reverse proxy tunnel'")
 os.system("git push")
