@@ -9,22 +9,20 @@ import config
 path = "/mnt/extdisk/Courses"
 isdir = os.path.isdir(path)
 if(isdir==False):
-    print("Hard drive is not connected")
+    print("[ ERROR ]Hard drive is not connected")
     sys.exit()
 
-print("Hard drive connected")
+print("[ INFO ] Hard drive connected")
 #print("Before auth setting")
 auth = config.auth
-print("Auth: ",auth)
+print("[ INFO ] Auth: ",auth)
 #ngrok.set_auth_token(auth)
-pyngrok_config = PyngrokConfig(auth_token=auth)
-print("Auth set done")
-pyngrok_config = PyngrokConfig(region="in")
-print("region set done")
+pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
+print("[ INFO ] Auth and region set done")
 #public_url = ngrok.connect()
 public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config)
-print("connect is also done")
-print("URL: ",public_url)
+print("[ INFO ] connect is done")
+print("[ INFO ] URL: ",public_url)
 
 with open('/home/pi/Durgeshs-pub/redirect.js','r') as file:
     data = file.readlines()
