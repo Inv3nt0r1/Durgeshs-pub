@@ -1,7 +1,7 @@
 #!/bin/bash
 . /home/pi/.bashrc
 echo "Script loaded"
-sudo mount /dev/sda1 /mnt/extdisk
+#sudo mount /dev/sda1 /mnt/extdisk
 echo "Disk mounted"
 python3 /home/pi/Durgeshs-pub/script.py &
 echo "Python program started, sleeping for 30 seconds"
