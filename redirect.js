@@ -1,9 +1,4 @@
 var link = "http://828f9bbe3819.in.ngrok.io"
-var link = "http://5615053c3980.in.ngrok.io"
-=======
->>>>>>> db06ecea7d54753f97cf795cf080d24a9c7bd41f
-
-var link = "https://828f9bbe3819.in.ngrok.io"
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -54,7 +49,6 @@ document.getElementById("redirect_button").onclick = function () {
                     document.getElementById("redirect_button").disabled = true;
                     document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
                 }, 2000);
-                
             }
         }
     });
