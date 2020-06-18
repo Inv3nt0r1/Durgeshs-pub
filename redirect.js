@@ -1,49 +1,57 @@
 
-var link = "http://cf68f917a1155.in.ngrok.io"
+var link = "https://828f9bbe3819.in.ngrok.io"
 
-//var link = "http://www.google.com"
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
+
+  var timeout;
+  var timeout1;
+  var timeout2;
 document.getElementById("redirect_button").onclick = function () {
-    const url = "https://www.google.com/";
+    var flag;
+    $("#more_info").html("Checking server status. Hang on..");
     $.ajax({
-        url: url,
+        url: link,
         dataType: 'jsonp',
         statusCode: {
-            200: function () {
-                console.log("status code 200 returned");
+            200: function () {   
+                console.log("status code 200 returned. URL exist. Server is running."); 
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    $("#more_info").html("Server is up and running.");
+                }, 2000);
+
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    $("#more_info").html("Checking reverse proxy tunnel status.");
+                }, 2000);
+
+                clearTimeout(timeout1);
+                timeout1 = setTimeout(function() {
+                    $("#more_info").html("Done redirecting.");
+                }, 4000);
+
+                clearTimeout(timeout2);
+                timeout2 = setTimeout(function() {
+                    location.href = link;
+                }, 5000);
             },
             404: function () {
-                console.log("status code 404 returned");
+                console.log("status code 404 returned. URL does not exist. Server is not running.");
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    $("#more_info").attr('style','color: red');
+                    $("#more_info").html("Server is Down.");
+                    document.getElementById("redirect_button").disabled = true;
+                    document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
+                }, 2000);
+                
             }
-        },
-        error: function () {
-            console.log("Error function : Error");
         }
     });
 }
-
-// document.getElementById("redirect_button").onclick = function () {
-//     location.href = link;
-// };
-
-
-// function UrlExists(url, cb){
-//     jQuery.ajax({
-//         url:      url,
-//         dataType: 'text',
-//         type:     'GET',
-//         complete:  function(xhr){
-//             if(typeof cb === 'function')
-//                cb.apply(this, [xhr.status]);
-//         }
-//     });
-// }
-
-// UrlExists('-- Insert Url Here --', function(status) {
-//     if(status === 200) {
-//         -- Execute code if successful --
-//     } else if(status === 404) {
-//         -- Execute code if not successful --
-//     }else{
-//        -- Execute code if status doesn't match above --
-//     }
-// });
