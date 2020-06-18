@@ -22,7 +22,10 @@ print("[ INFO ] Auth and region set done")
 #public_url = ngrok.connect()
 public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config)
 print("[ INFO ] connect is done")
+public_url = "https"+public_url[4:]
 print("[ INFO ] URL: ",public_url)
+
+
 
 with open('/home/pi/Durgeshs-pub/redirect.js','r') as file:
     data = file.readlines()
