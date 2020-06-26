@@ -9,7 +9,7 @@ import config
 path = "/mnt/extdisk/Courses"
 isdir = os.path.isdir(path)
 if(isdir==False):
-    print("[ ERROR ]Hard drive is not connected")
+    print("[ ERROR ] Hard drive is not connected")
     sys.exit()
 
 print("[ INFO ] Hard drive connected")

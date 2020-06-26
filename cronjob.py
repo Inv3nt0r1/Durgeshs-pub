@@ -8,6 +8,12 @@ import config
 
 auth = config.auth
 
+path = "/mnt/extdisk/Courses"
+isdir = os.path.isdir(path)
+if(isdir==False):
+    print("[ ERROR ] Hard drive is not connected")
+    sys.exit()
+
 def is_connected():
     try:
         # connect to the host -- tells us if the host is actually
@@ -27,6 +33,7 @@ pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
 if(is_connected()):
     try:
         tunnels = ngrok.get_tunnels(pyngrok_config=pyngrok_config)
+        print("[ INFO ] Connection was able to establish. This signifies main tunnel was absent. Restarting.")
         os.system("sudo reboot")
     except:
         print("[ INFO ] Tunnel is up.")
