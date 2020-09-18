@@ -1,4 +1,4 @@
-var link = "https://d55d7c07ff7c.in.ngrok.io"
+var link = "https://f7206fe9714f.in.ngrok.io"
 
 function sleep(milliseconds) {
     const date = Date.now();
