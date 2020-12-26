@@ -35,7 +35,7 @@ data[0] = 'var link = "'+public_url+'"\n'
 with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
     file.writelines(data)
 
-print("\n\n\nData: ",data,"\n\n\n")
+#print("\n\n\nData: ",data,"\n\n\n")
 """
 os.system("cd /home/pi/Durgeshs-pub")
 os.system("git add .")
