@@ -2,9 +2,11 @@ from pyngrok.conf import PyngrokConfig
 from pyngrok import ngrok
 import os
 import sys
+from datetime import datetime
 
 import config
 
+print("Regular tunnel check script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
 path = "/mnt/extdisk/Courses"
 isdir = os.path.isdir(path)
