@@ -1,7 +1,6 @@
 #!/bin/bash
 . /home/pi/.bashrc
-now = $(date)
-echo "Script loaded at $now"
+echo "Script loaded at"+date
 sudo mount /dev/sda1 /mnt/extdisk
 echo "Disk mounted"
 python3 /home/pi/Durgeshs-pub/script.py &
