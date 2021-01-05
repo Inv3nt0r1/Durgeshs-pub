@@ -6,7 +6,7 @@ from datetime import datetime
 
 import config
 
-print("Regular tunnel check script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+print("Reboot python script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
 path = "/mnt/extdisk/Courses"
 isdir = os.path.isdir(path)

@@ -3,9 +3,10 @@ from pyngrok import ngrok
 import os
 import sys
 import socket
-
+from datetime import datetime
 import config
 
+print("Routine tunnel check script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 auth = config.auth
 
 path = "/mnt/extdisk/Courses"
