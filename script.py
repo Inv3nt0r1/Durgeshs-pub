@@ -19,7 +19,9 @@ print("[ INFO ] Hard drive connected")
 auth = config.auth
 print("[ INFO ] Auth: ",auth)
 #ngrok.set_auth_token(auth)
-pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
+#pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
+pyngrok_config = PyngrokConfig(auth_token=auth)
+
 print("[ INFO ] Auth and region set done")
 #public_url = ngrok.connect()
 public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config)
