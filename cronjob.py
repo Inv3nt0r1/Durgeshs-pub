@@ -43,8 +43,8 @@ def is_connected(hostname):
     return False
 
 print("[ INFO ] Setting Configuration object.")
-#pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
-pyngrok_config = PyngrokConfig(auth_token=auth)
+pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
+#pyngrok_config = PyngrokConfig(auth_token=auth)
 
 if(is_connected(REMOTE_SERVER)):
     try:
