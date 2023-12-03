@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/home/pi/Durgeshs-pub/cronjob.py", line 1, in <module>
-    from pyngrok.conf import PyngrokConfig
-ModuleNotFoundError: No module named 'pyngrok'
