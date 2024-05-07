@@ -57,7 +57,7 @@ echo "$SECURE_MYSQL"
 
 #Remove expect since we don't need it anymore
 sudo apt-get remove expect -y
-sudo apt autoremove
+sudo apt autoremove -y
 
 #Create the nextcloud database and user
 # ATTENTION: KINDLY UPDATE THE PASSWORD IN THIS SQL FILE: create_db_nextcloud.sql
