@@ -80,9 +80,6 @@ sudo chown -R www-data:www-data /var/www/nextcloud/
 sudo chmod 750 /var/www/nextcloud/data
 
 #-------------Configuring Apache for NextCloud---------------
-#Create a file to store configuration changes for nextCloud
-sudo nano /etc/apache2/sites-available/nextcloud.conf
-
 cd /etc/apache2/sites-available
 
 #Create a configuration file nextcloud and configure it to handle nextcloud under /nextcloud path
