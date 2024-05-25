@@ -43,6 +43,7 @@ os.system("git add .")
 os.system("git commit -m 'This commit is automatically done by the server script, to keep updating the reverse proxy tunnel'")
 os.system("git push")
 
+print("[ INFO ] Done pushing the updated link. Holding on the process for ngrok :)")
 
 ngrok_process = ngrok.get_ngrok_process()
 
