@@ -28,8 +28,6 @@ public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config,bind_tls=True).pub
 print("[ INFO ] connect is done")
 print("[ INFO ] URL: ",public_url)
 
-
-
 with open('/home/pi/Durgeshs-pub/redirect.js','r') as file:
     data = file.readlines()
 
@@ -37,6 +35,14 @@ data[0] = 'var link = "'+public_url+'"\n'
 
 with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
     file.writelines(data)
+
+try:
+    # Block until CTRL-C or some other terminating event
+    ngrok_process.proc.wait()
+except KeyboardInterrupt:
+    print(" Shutting down server.")
+
+    ngrok.kill()
 
 #print("\n\n\nData: ",data,"\n\n\n")
 """
