@@ -1,8 +1,9 @@
 #!/bin/bash
 . /home/pi/.bashrc
 echo "Script loaded at"+date
-sudo mount /dev/sda1 /mnt/extdisk
-echo "Disk mounted"
+sudo mount /dev/sda1 /mnt/ExtDiskNas
+sudo mount /dev/sda2 /mnt/NextCloudDriveMountPoint
+echo "Disks mounted"
 python3 /home/pi/Durgeshs-pub/script.py &
 echo "Python program started, sleeping for 30 seconds"
 sleep 30

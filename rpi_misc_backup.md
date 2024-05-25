@@ -1,7 +1,7 @@
 # RPI Backup:
 
 ### QbitTorrent:
-Default safe path: `/mnt/extdisk/downloads/`
+Default safe path: `/mnt/ExtDiskNas/downloads`
 
 Bypass authentication for clients in whitelisted IP subnets: 
 ```
