@@ -104,4 +104,4 @@ sudo a2ensite nextcloud.conf
 #Restart Apache2 to force it to read in the updated configuration file
 sudo systemctl reload apache2
 
-#Follow next steps from this website: https://pimylifeup.com/raspberry-pi-nextcloud-server/#moving-nextcloud-s-data-folder
+#Follow next steps from this website: https://pimylifeup.com/raspberry-pi-nextcloud-server/#nextcloud-initial-setup
