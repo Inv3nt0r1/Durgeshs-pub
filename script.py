@@ -36,6 +36,8 @@ data[0] = 'var link = "'+public_url+'"\n'
 with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
     file.writelines(data)
 
+ngrok_process = ngrok.get_ngrok_process()
+
 try:
     # Block until CTRL-C or some other terminating event
     ngrok_process.proc.wait()
