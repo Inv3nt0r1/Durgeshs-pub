@@ -18,7 +18,7 @@ document.getElementById("redirect_button").onclick = function () {
         url: link,
         dataType: 'jsonp',
         statusCode: {
-            200: function () {   
+            302: function () {   
                 console.log("status code 200 returned. URL exist. Server is running."); 
                 clearTimeout(timeout);
                 timeout = setTimeout(function() {
