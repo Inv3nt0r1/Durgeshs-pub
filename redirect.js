@@ -30,11 +30,7 @@ document.getElementById('redirect_button').addEventListener('click', function() 
     urlExists(link, function(exists) {
         if(exists) {
             console.log("status code 200 returned. URL exist. Server is running."); 
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
-                    $("#more_info").html("Server is up and running.");
-                }, 2000);
-
+            $("#more_info").html("Server is up and running.");
                 clearTimeout(timeout);
                 timeout = setTimeout(function() {
                     $("#more_info").html("Checking reverse proxy tunnel status.");
