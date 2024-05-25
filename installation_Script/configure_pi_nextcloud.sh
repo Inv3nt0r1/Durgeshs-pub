@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 #Update all libraries and packages
 sudo apt update
