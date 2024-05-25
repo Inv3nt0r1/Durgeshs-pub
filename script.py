@@ -8,7 +8,7 @@ import config
 
 print("Reboot python script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
-path = "/mnt/ExtDiskNas/Courses"
+path = "/mnt/ExtDiskNas/Learnings"
 isdir = os.path.isdir(path)
 if(isdir==False):
     print("[ ERROR ] Hard drive is not connected")
