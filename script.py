@@ -24,7 +24,7 @@ pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
 
 print("[ INFO ] Auth and region set done")
 #public_url = ngrok.connect()
-public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config,bind_tls=True).public_url
+public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config).public_url
 print("[ INFO ] connect is done")
 print("[ INFO ] URL: ",public_url)
 
