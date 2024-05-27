@@ -1,4 +1,4 @@
-var link = "https://bf68-206-84-231-69.ngrok-free.app"
+var link = "https://6e8a-103-197-221-250.ngrok-free.app/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -11,14 +11,30 @@ function sleep(milliseconds) {
   var timeout;
   var timeout1;
   var timeout2;
+
 document.getElementById("redirect_button").onclick = function () {
     var flag;
     $("#more_info").html("Checking server status. Hang on..");
-    $.ajax({
-        url: link,
-        dataType: 'jsonp',
-        statusCode: {
-            200: function () {   
+    fetch(link)
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log("status code 404 returned. URL does not exist. Server is not running.");
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                            $("#more_info").attr('style','color: red');
+                            $("#more_info").html("Server is Down.");
+                            document.getElementById("redirect_button").disabled = true;
+                            document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
+                        }, 2000);
+                } else {
+                    console.log("Some other error occured. The Check to see if the website is up or not gave: "+response.status+" status code");
+                }
+            }
+            const contentType = response.headers.get('Content-Type');
+            console.log(contentType);
+            
+            if (contentType.includes('application/json') || contentType.includes('application/javascript') || contentType.includes('text/html')) {
                 console.log("status code 200 returned. URL exist. Server is running."); 
                 clearTimeout(timeout);
                 timeout = setTimeout(function() {
@@ -39,17 +55,19 @@ document.getElementById("redirect_button").onclick = function () {
                 timeout2 = setTimeout(function() {
                     location.href = link;
                 }, 5000);
-            },
-            404: function () {
-                console.log("status code 404 returned. URL does not exist. Server is not running.");
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
+            } else {
+                throw new Error(`Unexpected content type:`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            console.log("status code 404 returned. URL does not exist. Server is not running.");
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
                     $("#more_info").attr('style','color: red');
                     $("#more_info").html("Server is Down.");
                     document.getElementById("redirect_button").disabled = true;
                     document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
-                }, 2000);
-            }
-        }
-    });
-}
+            }, 2000);
+        });
+};
