@@ -1,4 +1,4 @@
-var link = "https://6e8a-103-197-221-250.ngrok-free.app"
+var link = "https://6e8a-103-197-221-250.ngrok-free.app/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -12,25 +12,35 @@ function sleep(milliseconds) {
   var timeout1; 
   var timeout2;
 
-function urlExists(url, callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('HEAD', url, true);
-    xhr.onreadystatechange = function() {
-        console.log(xhr);
-        if (xhr.readyState === 4) {
-            callback(xhr.status >= 200 && xhr.status < 300);
-        }
-    };
-    xhr.onerror = function() {
-        callback(false);
-    };
-    xhr.send();
-}
-document.getElementById('redirect_button').addEventListener('click', function() {
-    urlExists(link, function(exists) {
-        if(exists) {
-            console.log("status code 200 returned. URL exist. Server is running."); 
-            $("#more_info").html("Server is up and running.");
+document.getElementById("redirect_button").onclick = function () {
+    var flag;
+    $("#more_info").html("Checking server status. Hang on..");
+    fetch(link)
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log("status code 404 returned. URL does not exist. Server is not running.");
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                            $("#more_info").attr('style','color: red');
+                            $("#more_info").html("Server is Down.");
+                            document.getElementById("redirect_button").disabled = true;
+                            document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
+                        }, 2000);
+                } else {
+                    console.log("Some other error occured. The Check to see if the website is up or not gave: "+response.status+" status code");
+                }
+            }
+            const contentType = response.headers.get('Content-Type');
+            console.log(contentType);
+            
+            if (contentType.includes('application/json') || contentType.includes('application/javascript') || contentType.includes('text/html')) {
+                console.log("status code 200 returned. URL exist. Server is running."); 
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    $("#more_info").html("Server is up and running.");
+                }, 2000);
+
                 clearTimeout(timeout);
                 timeout = setTimeout(function() {
                     $("#more_info").html("Checking reverse proxy tunnel status.");
@@ -45,16 +55,19 @@ document.getElementById('redirect_button').addEventListener('click', function() 
                 timeout2 = setTimeout(function() {
                     window.location.href = link;
                 }, 5000);
-        } else {
+            } else {
+                throw new Error(`Unexpected content type:`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
             console.log("status code 404 returned. URL does not exist. Server is not running.");
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
                     $("#more_info").attr('style','color: red');
                     $("#more_info").html("Server is Down.");
                     document.getElementById("redirect_button").disabled = true;
                     document.getElementById("redirect_button").innerHTML = "Cannot redirect :(";
-                }, 2000);
-        }
-    });
-});
-
+            }, 2000);
+        });
+};
