@@ -21,7 +21,7 @@ if(isdir==False):
 print("[ INFO ] Hard drive connected")
 #print("Before auth setting")
 auth = config.auth
-print("[ INFO ] Auth: ",auth)
+
 ngrok.set_auth_token(auth)
 pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
 #pyngrok_config = PyngrokConfig(auth_token=auth)

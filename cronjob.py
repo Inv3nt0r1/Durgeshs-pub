@@ -7,26 +7,23 @@ from datetime import datetime
 import config
 
 print("Routine tunnel check script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-auth = config.auth
 
-path = "/mnt/ExtDiskNas/Courses"
+# ------- Checking the Hard Drive Connection and MountPoint -------------
+path = "/mnt/ExtDiskNas/Learnings"
 isdir = os.path.isdir(path)
 if(isdir==False):
     print("[ ERROR ] Hard drive is not connected")
-    sys.exit()
-"""
-def is_connected():
     try:
-        # connect to the host -- tells us if the host is actually
-        # reachable
-        socket.create_connection(("1.1.1.1", 53))
-        print("[ INFO ] Network is connected.")
-        return True
-    except OSError:
-        print("[ INFO ] Network is not connected.")
-        pass
-    return False
-"""
+        # Mounting the hard disk partitions
+        print("[ INFO ] Attempting to mount the partitions")
+        os.system("sudo mount /dev/sda1 /mnt/ExtDiskNas")
+        os.system("sudo mount /dev/sda2 /mnt/NextCloudDriveMountPoint")
+    except:
+        os.system("[ ERROR ] Attempt Failed. Please check the drive!")
+        sys.exit()
+    
+
+# -------- Checking the Network Connection ------------------------------
 REMOTE_SERVER = "one.one.one.one"
 def is_connected(hostname):
     try:
@@ -42,6 +39,11 @@ def is_connected(hostname):
         pass
     return False
 
+
+# ------------ Testing the Reverse Proxy Tunnel ---------------------------
+auth = config.auth
+
+ngrok.set_auth_token(auth)
 print("[ INFO ] Setting Configuration object.")
 pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
 #pyngrok_config = PyngrokConfig(auth_token=auth)
