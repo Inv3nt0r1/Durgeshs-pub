@@ -16,8 +16,8 @@ if(isdir==False):
     try:
         # Mounting the hard disk partitions
         print("[ INFO ] Attempting to mount the partitions")
-        os.system("sudo mount /dev/sda1 /mnt/ExtDiskNas")
-        os.system("sudo mount /dev/sda2 /mnt/NextCloudDriveMountPoint")
+        os.system("sudo mount /dev/sda5 /mnt/ExtDiskNas")
+        os.system("sudo mount /dev/sda1 /mnt/NextCloudDriveMountPoint")
     except:
         os.system("[ ERROR ] Attempt Failed. Please check the drive!")
         sys.exit()
