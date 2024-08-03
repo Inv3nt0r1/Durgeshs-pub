@@ -9,8 +9,8 @@ import config
 print("Reboot python script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
 # Mounting the hard disk partitions
-os.system("sudo mount /dev/sda1 /mnt/ExtDiskNas")
-os.system("sudo mount /dev/sda2 /mnt/NextCloudDriveMountPoint")
+os.system("sudo mount /dev/sda5 /mnt/ExtDiskNas")
+os.system("sudo mount /dev/sda1 /mnt/NextCloudDriveMountPoint")
 
 path = "/mnt/ExtDiskNas/Learnings"
 isdir = os.path.isdir(path)
