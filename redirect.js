@@ -1,4 +1,4 @@
-var link = "https://durgeshspub.a.pinggy.link/web/"
+var link = "https://cool-pans-double.loca.lt"
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -15,7 +15,11 @@ function sleep(milliseconds) {
 document.getElementById("redirect_button").onclick = function () {
     var flag;
     $("#more_info").html("Checking server status. Hang on..");
-    fetch(link)
+    fetch(link, {
+        headers: {
+            'bypass-tunnel-reminder':'LOL'
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 if (response.status === 404) {
