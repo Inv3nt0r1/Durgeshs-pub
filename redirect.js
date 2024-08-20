@@ -1,4 +1,4 @@
-var link = "https://cool-pans-double.loca.lt"
+var link = "https://f543ac190e9480.lhr.life/"
 
 function sleep(milliseconds) {
     const date = Date.now();
