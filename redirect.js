@@ -1,4 +1,4 @@
-var link = "https://f543ac190e9480.lhr.life/"
+var link = "https://durgeshspub.a.pinggy.link/"
 
 function sleep(milliseconds) {
     const date = Date.now();
