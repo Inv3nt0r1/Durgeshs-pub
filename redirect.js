@@ -15,11 +15,7 @@ function sleep(milliseconds) {
 document.getElementById("redirect_button").onclick = function () {
     var flag;
     $("#more_info").html("Checking server status. Hang on..");
-    fetch(link, {
-        headers: {
-            'bypass-tunnel-reminder':'LOL'
-        }
-    })
+    fetch(link)
         .then(response => {
             if (!response.ok) {
                 if (response.status === 404) {
