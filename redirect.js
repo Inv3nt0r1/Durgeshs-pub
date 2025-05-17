@@ -1,4 +1,4 @@
-var link = "https://lang-stopped-indices-whale.trycloudflare.com/web/"
+var link = "https://v-m-img-assigned.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
