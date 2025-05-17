@@ -1,61 +1,41 @@
-from pyngrok.conf import PyngrokConfig
-from pyngrok import ngrok
 import os
 import sys
-import socket
+import requests
 from datetime import datetime
-import config
 
-print("Routine tunnel check script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+def log_info(msg):
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [INFO] {msg}")
 
-# ------- Checking the Hard Drive Connection and MountPoint -------------
-path = "/mnt/ExtDiskNas/Learnings"
-isdir = os.path.isdir(path)
-if(isdir==False):
-    print("[ ERROR ] Hard drive is not connected")
-    try:
-        # Mounting the hard disk partitions
-        print("[ INFO ] Attempting to mount the partitions")
-        os.system("sudo mount /dev/sda5 /mnt/ExtDiskNas")
-        os.system("sudo mount /dev/sda1 /mnt/NextCloudDriveMountPoint")
-    except:
-        os.system("[ ERROR ] Attempt Failed. Please check the drive!")
-        sys.exit()
-    
+def log_error(msg):
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [ERROR] {msg}")
 
-# -------- Checking the Network Connection ------------------------------
-REMOTE_SERVER = "one.one.one.one"
-def is_connected(hostname):
-    try:
-        # see if we can resolve the host name -- tells us if there is
-        # a DNS listening
-        host = socket.gethostbyname(hostname)
-        # connect to the host -- tells us if the host is actually
-        # reachable
-        s = socket.create_connection((host, 80), 2)
-        s.close()
-        return True
-    except:
-        pass
-    return False
+log_info("Routine tunnel check script started")
 
+# Path where your tunnel URL is saved (update if needed)
+tunnel_url_path = "/home/pi/tunnel_url.txt"
 
-# ------------ Testing the Reverse Proxy Tunnel ---------------------------
-auth = config.auth
+# Check if tunnel URL file exists
+if not os.path.isfile(tunnel_url_path):
+    log_error(f"Tunnel URL file not found at {tunnel_url_path}. Cannot check tunnel status.")
+    sys.exit(1)
 
-ngrok.set_auth_token(auth)
-print("[ INFO ] Setting Configuration object.")
-pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
-#pyngrok_config = PyngrokConfig(auth_token=auth)
+with open(tunnel_url_path, 'r') as f:
+    tunnel_url = f.read().strip()
 
-if(is_connected(REMOTE_SERVER)):
-    try:
-        tunnels = ngrok.get_tunnels(pyngrok_config=pyngrok_config)
-        print("[ INFO ] Connection was able to establish. This signifies main tunnel was absent. Restarting.")
+if not tunnel_url:
+    log_error("Tunnel URL is empty. Cannot check tunnel status.")
+    sys.exit(1)
+
+log_info(f"Checking tunnel URL: {tunnel_url}")
+
+try:
+    # HTTP GET request to tunnel URL with short timeout
+    response = requests.get(tunnel_url, timeout=5)
+    if response.status_code == 200:
+        log_info("Tunnel is up and responding (HTTP 200). No action needed.")
+    else:
+        log_error(f"Tunnel responded with status code {response.status_code}. Rebooting RPi...")
         os.system("sudo reboot")
-    except:
-        print("[ INFO ] Tunnel is up.")
-        sys.exit()
-else:
-    sys.exit()
-
+except Exception as e:
+    log_error(f"Failed to reach tunnel URL: {e}. Rebooting RPi...")
+    os.system("sudo reboot")

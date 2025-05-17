@@ -1,74 +1,93 @@
-from pyngrok.conf import PyngrokConfig
-from pyngrok import ngrok
+import subprocess
+import re
 import os
 import sys
 from datetime import datetime
-import subprocess
 
-import config
+def log_info(msg):
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [INFO] {msg}")
 
-print("Reboot python script started at "+ datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+def log_error(msg):
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [ERROR] {msg}")
 
-# Mounting the hard disk partitions
-os.system("sudo mount /dev/sda5 /mnt/ExtDiskNas")
-os.system("sudo mount /dev/sda1 /mnt/NextCloudDriveMountPoint")
+def start_tunnel_and_get_url():
+    log_info("Starting cloudflared tunnel...")
+    proc = subprocess.Popen(
+        ["cloudflared", "tunnel", "--url", "http://localhost:8096"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+        universal_newlines=True
+    )
+    tunnel_url = None
 
-path = "/mnt/ExtDiskNas/Learnings"
-isdir = os.path.isdir(path)
-if(isdir==False):
-    print("[ ERROR ] Hard drive is not connected")
-    sys.exit()
+    for line in proc.stdout:
+        line = line.strip()
+        print(f"[cloudflared] {line}")
+        match = re.search(r"HTTP URL:\s*(https?://\S+)", line)
+        if match:
+            tunnel_url = match.group(1)
+            log_info(f"Tunnel URL found: {tunnel_url}")
+            break
 
+    if not tunnel_url:
+        proc.terminate()
+        raise RuntimeError("Could not find tunnel URL in cloudflared output")
 
-cmd = '''
-while true; do 
- ssh -p 443 -R0:localhost:8096 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 gF3kJEuV3JW@a.pinggy.io ; 
-sleep 10; done
-'''
-subprocess.check_output(cmd, shell=True)
+    return tunnel_url, proc
 
+def update_redirect_js(public_url, redirect_js_path="/home/pi/Durgeshs-pub/redirect.js"):
+    try:
+        with open(redirect_js_path, 'r') as file:
+            data = file.readlines()
 
-# print("[ INFO ] Hard drive connected")
-# #print("Before auth setting")
-# auth = config.auth
+        # Update first line with new URL (adjust if needed)
+        data[0] = f'var link = "{public_url}/web/"\n'
 
-# ngrok.set_auth_token(auth)
-# pyngrok_config = PyngrokConfig(auth_token=auth,region="in")
-# #pyngrok_config = PyngrokConfig(auth_token=auth)
+        with open(redirect_js_path, 'w') as file:
+            file.writelines(data)
 
-# print("[ INFO ] Auth and region set done")
-# #public_url = ngrok.connect()
-# public_url = ngrok.connect(8096,pyngrok_config=pyngrok_config).public_url
-# print("[ INFO ] connect is done")
-# print("[ INFO ] URL: ",public_url)
+        log_info(f"Updated redirect.js with new URL: {public_url}")
+    except Exception as e:
+        log_error(f"Failed to update redirect.js: {e}")
+        raise
 
-# with open('/home/pi/Durgeshs-pub/redirect.js','r') as file:
-#     data = file.readlines()
+def git_push_changes(repo_path="/home/pi/Durgeshs-pub"):
+    try:
+        os.chdir(repo_path)
+        os.system("git pull")
+        os.system("git add .")
+        os.system('git commit -m "Auto update tunnel URL"')
+        os.system("git push")
+        log_info("Committed and pushed updated URL to GitHub repo")
+    except Exception as e:
+        log_error(f"Git push failed: {e}")
+        raise
 
-# data[0] = 'var link = "'+public_url+'/web/'+'"\n'
+def main():
+    try:
+        public_url, tunnel_proc = start_tunnel_and_get_url()
 
-# with open('/home/pi/Durgeshs-pub/redirect.js','w') as file:
-#     file.writelines(data)
+        # Save URL to file in Durgeshs-pub folder
+        url_file_path = "/home/pi/Durgeshs-pub/tunnel_url.txt"
+        with open(url_file_path, "w") as f:
+            f.write(public_url)
+        log_info(f"Saved tunnel URL to {url_file_path}")
 
+        # Update redirect.js
+        update_redirect_js(public_url)
 
-# os.chdir("/home/pi/Durgeshs-pub")
-# os.system("cd /home/pi/Durgeshs-pub")
-# os.system("git pull")
-# os.system("git add .")
-# os.system("git commit -m 'This commit is automatically done by the server script, to keep updating the reverse proxy tunnel'")
-# os.system("git push")
+        # Git push
+        git_push_changes()
 
-# print("[ INFO ] Done pushing the updated link. Holding on the process for ngrok :)")
+        log_info("Tunnel setup complete. Waiting to keep tunnel alive...")
+        # Wait here to keep tunnel process alive
+        tunnel_proc.wait()
 
-# ngrok_process = ngrok.get_ngrok_process()
+    except Exception as e:
+        log_error(f"Startup tunnel script failed: {e}")
+        sys.exit(1)
 
-# try:
-#     # Block until CTRL-C or some other terminating event
-#     ngrok_process.proc.wait()
-# except KeyboardInterrupt:
-#     print(" Shutting down server.")
-
-#     ngrok.kill()
-
-#print("\n\n\nData: ",data,"\n\n\n")
-
+if __name__ == "__main__":
+    main()
