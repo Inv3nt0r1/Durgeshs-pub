@@ -1,4 +1,4 @@
-var link = "(it may take some time to be reachable):  |/web/"
+var link = "https://violation-against-halo-qty.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
