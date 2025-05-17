@@ -22,8 +22,10 @@ def log(message, level="INFO"):
 def mount_drives():
     log("Checking hard drive connection...")
     
-    if not os.path.isdir(MOUNT_PATH_1):
-        log("Hard drive is not connected. Attempting to mount...", "ERROR")
+    # Check if specific folder is accessible
+    learnings_path = "/mnt/ExtDiskNas/Learnings"
+    if not os.path.isdir(learnings_path):
+        log(f"{learnings_path} is not accessible. Attempting to mount...", "ERROR")
         
         log(f"Mounting {PARTITION_1} to {MOUNT_PATH_1}...")
         os.system(f"sudo mount {PARTITION_1} {MOUNT_PATH_1}")
@@ -32,16 +34,12 @@ def mount_drives():
         os.system(f"sudo mount {PARTITION_2} {MOUNT_PATH_2}")
     
     # Verify Mount
-    if os.path.isdir(MOUNT_PATH_1):
+    if os.path.isdir(learnings_path):
         log(f"Successfully mounted {MOUNT_PATH_1}.")
     else:
         log(f"Failed to mount {MOUNT_PATH_1}.", "ERROR")
-
-    if os.path.isdir(MOUNT_PATH_2):
-        log(f"Successfully mounted {MOUNT_PATH_2}.")
-    else:
-        log(f"Failed to mount {MOUNT_PATH_2}.", "ERROR")
         sys.exit()
+
 
 import re
 
