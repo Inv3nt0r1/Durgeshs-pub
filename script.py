@@ -61,13 +61,19 @@ def start_tunnel():
         log("Waiting for tunnel URL...")
         for line in proc.stdout:
             log(f"[CLOUDFLARED] {line.strip()}")
+
+            # Identify the line with the URL
             if "Visit it at" in line:
-                public_url = line.split("Visit it at")[-1].strip()
-                log(f"Tunnel URL obtained: {public_url}")
-                break
+                # Extract the URL using regex
+                import re
+                url_match = re.search(r"https?://[a-zA-Z0-9.-]+\.trycloudflare\.com", line)
+                if url_match:
+                    public_url = url_match.group(0)
+                    log(f"Tunnel URL obtained: {public_url}")
+                    break
 
         if not public_url:
-            log("Tunnel failed to start. Exiting.", "ERROR")
+            log("Tunnel failed to start or URL not obtained. Exiting.", "ERROR")
             sys.exit()
 
         # Save the URL to a file
