@@ -1,4 +1,4 @@
-var link = "https://v-m-img-assigned.trycloudflare.com/web/"
+var link = "(it may take some time to be reachable):  |/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
