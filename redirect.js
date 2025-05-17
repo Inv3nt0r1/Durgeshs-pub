@@ -1,4 +1,4 @@
-var link = "https://violation-against-halo-qty.trycloudflare.com/web/"
+var link = "https://tribute-patches-automatically-temple.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
