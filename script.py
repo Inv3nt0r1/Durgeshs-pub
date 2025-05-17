@@ -1,127 +1,131 @@
-import subprocess
-import re
 import os
 import sys
+import subprocess
 from datetime import datetime
 
-def log_info(msg):
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [INFO] {msg}")
+# Paths
+MOUNT_PATH_1 = "/mnt/ExtDiskNas"
+MOUNT_PATH_2 = "/mnt/NextCloudDriveMountPoint"
+REDIRECT_JS_PATH = "/home/pi/Durgeshs-pub/redirect.js"
+URL_FILE_PATH = "/home/pi/Durgeshs-pub/tunnel_url.txt"
+GIT_REPO_PATH = "/home/pi/Durgeshs-pub"
+CLOUDFLARED_PATH = "/usr/local/bin/cloudflared"
 
-def log_error(msg):
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [ERROR] {msg}")
+# Hard Drive Partitions
+PARTITION_1 = "/dev/sda5"
+PARTITION_2 = "/dev/sda1"
 
-def log_warning(msg):
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [WARNING] {msg}")
+def log(message, level="INFO"):
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"[{timestamp}] [{level}] {message}")
 
-def start_tunnel_and_get_url():
-    log_info("Starting cloudflared tunnel...")
+def mount_drives():
+    log("Checking hard drive connection...")
+    
+    if not os.path.isdir(MOUNT_PATH_1):
+        log("Hard drive is not connected. Attempting to mount...", "ERROR")
+        
+        log(f"Mounting {PARTITION_1} to {MOUNT_PATH_1}...")
+        os.system(f"sudo mount {PARTITION_1} {MOUNT_PATH_1}")
+        
+        log(f"Mounting {PARTITION_2} to {MOUNT_PATH_2}...")
+        os.system(f"sudo mount {PARTITION_2} {MOUNT_PATH_2}")
+    
+    # Verify Mount
+    if os.path.isdir(MOUNT_PATH_1):
+        log(f"Successfully mounted {MOUNT_PATH_1}.")
+    else:
+        log(f"Failed to mount {MOUNT_PATH_1}.", "ERROR")
+
+    if os.path.isdir(MOUNT_PATH_2):
+        log(f"Successfully mounted {MOUNT_PATH_2}.")
+    else:
+        log(f"Failed to mount {MOUNT_PATH_2}.", "ERROR")
+        sys.exit()
+
+def start_tunnel():
+    log("Starting cloudflared tunnel...")
     
     try:
         proc = subprocess.Popen(
-            ["/usr/local/bin/cloudflared", "tunnel", "--url", "http://localhost:8096"],
+            [CLOUDFLARED_PATH, "tunnel", "--url", "http://localhost:8096"],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
             bufsize=1,
             universal_newlines=True
         )
-    except Exception as e:
-        log_error(f"Failed to start cloudflared: {e}")
-        sys.exit(1)
 
-    tunnel_url = None
-    log_info("Reading cloudflared output to capture the tunnel URL...")
+        public_url = None
 
-    for line in proc.stdout:
-        line = line.strip()
-        print(f"[cloudflared] {line}")
+        log("Waiting for tunnel URL...")
+        for line in proc.stdout:
+            log(f"[CLOUDFLARED] {line.strip()}")
+            if "Visit it at" in line:
+                public_url = line.split("Visit it at")[-1].strip()
+                log(f"Tunnel URL obtained: {public_url}")
+                break
 
-        # Match the tunnel URL line
-        match = re.search(r"https://[a-zA-Z0-9-]+\.trycloudflare\.com", line)
-        if match:
-            tunnel_url = match.group(0)
-            log_info(f"Tunnel URL detected: {tunnel_url}")
-            break
+        if not public_url:
+            log("Tunnel failed to start. Exiting.", "ERROR")
+            sys.exit()
 
-    if not tunnel_url:
-        log_error("Could not find tunnel URL in cloudflared output.")
-        proc.terminate()
-        raise RuntimeError("Tunnel URL not found in cloudflared output.")
+        # Save the URL to a file
+        log(f"Saving URL to {URL_FILE_PATH}...")
+        with open(URL_FILE_PATH, "w") as url_file:
+            url_file.write(public_url)
 
-    log_info("Tunnel successfully started.")
-    return tunnel_url, proc
-
-def save_url_to_file(public_url, url_file_path="/home/pi/Durgeshs-pub/tunnel_url.txt"):
-    log_info(f"Saving tunnel URL to {url_file_path}...")
-    try:
-        with open(url_file_path, "w") as f:
-            f.write(public_url)
-        log_info(f"Tunnel URL saved to {url_file_path}: {public_url}")
-    except Exception as e:
-        log_error(f"Failed to save URL to file: {e}")
-        raise
-
-def update_redirect_js(public_url, redirect_js_path="/home/pi/Durgeshs-pub/redirect.js"):
-    log_info(f"Updating redirect.js with new URL: {public_url}...")
-    try:
-        with open(redirect_js_path, 'r') as file:
-            data = file.readlines()
-
-        # Update first line with new URL (adjust if needed)
-        data[0] = f'var link = "{public_url}/web/"\n'
-
-        with open(redirect_js_path, 'w') as file:
-            file.writelines(data)
-
-        log_info(f"redirect.js successfully updated with new URL.")
-    except FileNotFoundError:
-        log_warning(f"redirect.js not found at {redirect_js_path}. Skipping update.")
-    except Exception as e:
-        log_error(f"Failed to update redirect.js: {e}")
-        raise
-
-def git_push_changes(repo_path="/home/pi/Durgeshs-pub"):
-    log_info(f"Navigating to repo path: {repo_path}")
-    try:
-        os.chdir(repo_path)
-        log_info("Pulling latest changes...")
-        os.system("git pull")
-
-        log_info("Adding changes to git...")
-        os.system("git add .")
-
-        log_info("Committing changes...")
-        os.system('git commit -m "Auto update tunnel URL"')
-
-        log_info("Pushing changes to remote...")
-        os.system("git push")
-
-        log_info("Changes successfully pushed to GitHub.")
-    except Exception as e:
-        log_error(f"Git push failed: {e}")
-        raise
-
-def main():
-    try:
-        log_info("Starting tunnel creation and URL update process.")
-        public_url, tunnel_proc = start_tunnel_and_get_url()
-
-        # Save URL to file
-        save_url_to_file(public_url)
-
-        # Update redirect.js
+        # Update the redirect.js file
         update_redirect_js(public_url)
 
-        # Git push
-        git_push_changes()
-
-        log_info("Tunnel setup complete. Holding the process to keep the tunnel alive...")
-        # Wait here to keep tunnel process alive
-        tunnel_proc.wait()
+        # Push changes to GitHub
+        push_to_github()
 
     except Exception as e:
-        log_error(f"Startup script encountered an error: {e}")
-        sys.exit(1)
+        log(f"Error starting cloudflared: {str(e)}", "ERROR")
+        sys.exit()
+
+def update_redirect_js(public_url):
+    try:
+        log(f"Updating redirect.js file at {REDIRECT_JS_PATH} with the new URL...")
+        with open(REDIRECT_JS_PATH, 'r') as file:
+            data = file.readlines()
+
+        new_link = f'var link = "{public_url}/web/"\n'
+        data[0] = new_link
+
+        with open(REDIRECT_JS_PATH, 'w') as file:
+            file.writelines(data)
+
+        log(f"Successfully updated redirect.js with new link: {new_link.strip()}")
+    except Exception as e:
+        log(f"Failed to update redirect.js: {str(e)}", "ERROR")
+
+def push_to_github():
+    try:
+        log("Navigating to GitHub repository...")
+        os.chdir(GIT_REPO_PATH)
+
+        log("Pulling latest changes...")
+        os.system("git pull")
+
+        log("Adding changes to the staging area...")
+        os.system("git add .")
+
+        log("Committing changes...")
+        os.system("git commit -m 'Auto-update redirect link'")
+
+        log("Pushing changes to GitHub...")
+        os.system("git push")
+        log("Successfully pushed changes to GitHub.")
+    except Exception as e:
+        log(f"Failed to push changes to GitHub: {str(e)}", "ERROR")
+
+def main():
+    log("Reboot script started.")
+    mount_drives()
+    start_tunnel()
+    log("Reboot script completed.")
 
 if __name__ == "__main__":
     main()
