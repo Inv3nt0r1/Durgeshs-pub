@@ -18,7 +18,7 @@ def start_tunnel_and_get_url():
     
     try:
         proc = subprocess.Popen(
-            ["cloudflared", "tunnel", "--url", "http://localhost:8096"],
+            ["/usr/local/bin/cloudflared", "tunnel", "--url", "http://localhost:8096"],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
