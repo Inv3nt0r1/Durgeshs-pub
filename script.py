@@ -43,10 +43,13 @@ def mount_drives():
         log(f"Failed to mount {MOUNT_PATH_2}.", "ERROR")
         sys.exit()
 
+import re
+
 def start_tunnel():
     log("Starting cloudflared tunnel...")
-    
+
     try:
+        log(f"Executing command: {CLOUDFLARED_PATH} tunnel --url http://localhost:8096")
         proc = subprocess.Popen(
             [CLOUDFLARED_PATH, "tunnel", "--url", "http://localhost:8096"],
             stdout=subprocess.PIPE,
@@ -57,23 +60,23 @@ def start_tunnel():
         )
 
         public_url = None
-
         log("Waiting for tunnel URL...")
+
+        url_pattern = re.compile(r"https://[a-zA-Z0-9-]+\.trycloudflare\.com")
+
         for line in proc.stdout:
             log(f"[CLOUDFLARED] {line.strip()}")
 
-            # Identify the line with the URL
-            if "Visit it at" in line:
-                # Extract the URL using regex
-                import re
-                url_match = re.search(r"https?://[a-zA-Z0-9.-]+\.trycloudflare\.com", line)
-                if url_match:
-                    public_url = url_match.group(0)
-                    log(f"Tunnel URL obtained: {public_url}")
-                    break
+            # Extract URL using regex
+            url_match = url_pattern.search(line)
+            if url_match:
+                public_url = url_match.group(0)
+                log(f"Tunnel URL obtained: {public_url}")
+                break
 
         if not public_url:
-            log("Tunnel failed to start or URL not obtained. Exiting.", "ERROR")
+            log("[ERROR] Failed to extract the tunnel URL.", "ERROR")
+            proc.terminate()
             sys.exit()
 
         # Save the URL to a file
@@ -88,8 +91,9 @@ def start_tunnel():
         push_to_github()
 
     except Exception as e:
-        log(f"Error starting cloudflared: {str(e)}", "ERROR")
+        log(f"[ERROR] Error starting cloudflared: {str(e)}", "ERROR")
         sys.exit()
+
 
 def update_redirect_js(public_url):
     try:
