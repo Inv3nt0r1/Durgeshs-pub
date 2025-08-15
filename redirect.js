@@ -1,4 +1,4 @@
-var link = "https://wal-actors-bk-signing.trycloudflare.com/web/"
+var link = "https://api.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
