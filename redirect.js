@@ -1,4 +1,4 @@
-var link = "https://api.trycloudflare.com/web/"
+var link = "https://unity-fair-defines-athletes.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
