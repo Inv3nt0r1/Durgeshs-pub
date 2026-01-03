@@ -1,4 +1,4 @@
-var link = "https://juice-specifics-festivals-desperate.trycloudflare.com/web/"
+var link = "https://minutes-convenience-exposure-couple.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
