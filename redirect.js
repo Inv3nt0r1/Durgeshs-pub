@@ -1,4 +1,4 @@
-var link = "https://pairs-displaying-metabolism-clan.trycloudflare.com/web/"
+var link = "https://response-zus-unknown-achieved.trycloudflare.com/web/"
 
 function sleep(milliseconds) {
     const date = Date.now();
